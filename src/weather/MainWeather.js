@@ -6,30 +6,37 @@ function MainWeather() {
     
     const[city,setCity] = useState('');
     const[weatherData,setWeatherData] = useState([{}]);
+    const[timersData,setTimersData] = useState([]);
     
     const API_key   = 'c79eb72da5f603d2d6098ca24fb7ce63'
-    const fetchData =  (search) =>{
+    // fetching data
+    const fetchData =  async(search="pune") =>{
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${API_key}`;
        axios.get(url).then((res)=>{
-           console.log('response',res.data)
+           console.log('response',res)
            setWeatherData(res.data)
        }).catch((err)=>{
            console.log('err',err);
-       })
+       });
+       setCity(" ");
     }
 
 
-    useEffect(()=>{
-        fetchData(city);
-    },[city])
+    // useEffect(()=>{
+    //     fetchData(city);
+    // },[city])
 
-    const inputHandle= (e) =>{
+    // searching city
+    const inputHandle = (e) =>{
+        clearTimeout(timersData);    // debouncing
         let inputData = e.target.value;
-        console.log(inputData);
-        setCity(inputData);
+        let timer =  setTimeout(() =>fetchData(inputData) , 1000);
+        setTimersData(timer);
+        setCity(e.target.value);
+        // console.log(inputData);
     }
 
-   
+
   return (
    <>
         <div className='container'>
@@ -40,7 +47,7 @@ function MainWeather() {
     
        />
     </div>
-    {weatherData.name}
+   
     <WeatherContent
     windGust={weatherData.wind.gust}
     windSpeed={weatherData.wind.speed}
