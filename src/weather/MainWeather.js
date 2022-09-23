@@ -5,26 +5,34 @@ import React, { useEffect, useState } from 'react';
 function MainWeather() {
     
     const[city,setCity] = useState('');
-    const[weatherData,setWeatherData] = useState([{}]);
+    const[weatherData,setWeatherData] = useState([]);
     const[timersData,setTimersData] = useState([]);
+    const[othersData,setOthersData] = useState([]);
     
     const API_key   = 'c79eb72da5f603d2d6098ca24fb7ce63'
-    // fetching data
+   
+   
     const fetchData =  async(search="pune") =>{
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${API_key}`;
-       axios.get(url).then((res)=>{
-           console.log('response',res)
-           setWeatherData(res.data)
-       }).catch((err)=>{
-           console.log('err',err);
-       });
-       setCity(" ");
-    }
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=pune&appid=c79eb72da5f603d2d6098ca24fb7ce63`;
+    await axios.get(url).then((res)=>{
+         //console.log(res.data)
+         setWeatherData(res.data.main)
+         setOthersData(res.data)
+     }).catch((err)=>{
+         console.log('err',err.message);
+     });
+     setCity(" ");
+  }
+   
+    console.log(othersData);
+   
 
-
-    // useEffect(()=>{
-    //     fetchData(city);
-    // },[city])
+    useEffect(()=>{
+      setTimeout(()=>{
+        fetchData(city);
+        },1000);
+        
+    },[])
 
     // searching city
     const inputHandle = (e) =>{
@@ -49,15 +57,8 @@ function MainWeather() {
     </div>
    
     <WeatherContent
-    windGust={weatherData.wind.gust}
-    windSpeed={weatherData.wind.speed}
-    visibility={weatherData.visibility}
-    climat ={weatherData.weather[0].main}
-    description={weatherData.weather[0].description}
-    max_temp={((weatherData.main.temp_min)-273.15).toFixed(0)}
-    name={weatherData.name}
-     temp={((weatherData.main.temp)-273.15).toFixed(0)}
-
+    weatherData={weatherData}
+    othersData={othersData}
       />
    </>
   )
